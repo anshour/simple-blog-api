@@ -12,7 +12,7 @@ Welcome to the Simple Blog API documentation. This API allows you to interact wi
 ## Base URL
 
 ```
-https://example.com
+https://simple-blog-api.vercel.app/
 ```
 
 ## Endpoints
