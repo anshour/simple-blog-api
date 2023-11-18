@@ -6,7 +6,9 @@ export default function Home() {
       <div>
         <h2>
           Hello, for api docs see{" "}
-          <a href="https://github.com/anshour/simple-blog-api/blob/main/README.md">here</a>
+          <a href="https://www.postman.com/maintenance-candidate-57457613/workspace/public-workspace/collection/19469946-3148bdf8-9a6b-42c8-b85a-0f430bcc3dc1?action=share&creator=19469946">
+            here
+          </a>
         </h2>
       </div>
     </main>
