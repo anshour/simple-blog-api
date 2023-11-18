@@ -24,8 +24,6 @@ export async function GET(request: NextRequest) {
       author: data.author,
       preview: content.slice(0, 200).replace("\n", "").replace("\r", "") + "...",
       content,
-      //TODO: ADD PREVIEW
-      // preview: "",
     });
   }
 
