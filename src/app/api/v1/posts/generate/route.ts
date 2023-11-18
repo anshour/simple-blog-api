@@ -1,35 +1,35 @@
-// YOU SHOULD ONLY RUN THIS FILE ON DEVELOPMENT
 // THIS FUNCTION IS FOR GENERATING POSTS.JSON FILE FROM MD FILE
 import { NextRequest, NextResponse } from "next/server";
-import slugify from "slugify";
-import path from "path";
-import fs from "fs";
 import matter from "gray-matter";
+import slugify from "slugify";
+import fs from "fs/promises";
+import path from "path";
 
-export async function GET(request: NextRequest, response: NextResponse) {
-  const files = fs.readdirSync("./src/data/md", { withFileTypes: true });
+export async function GET(request: NextRequest) {
+  const files = await fs.readdir("./src/data/md", { withFileTypes: true });
 
   const blogPosts = [];
   for (let index = 0; index < files.length; index++) {
     const filePath = path.join(files[index].path, files[index].name);
-    const fullContent = fs.readFileSync(filePath, "utf-8");
+    const fullContent = await fs.readFile(filePath, "utf-8");
     const { data, content } = matter(fullContent);
 
     blogPosts.push({
-      //TODO: MOVE ID TO MD FILE
-      id: index + 1,
+      id: data.id,
       title: data.title,
+      file: files[index].name,
       slug: slugify(data.title, { lower: true }),
       tags: data.tags,
       category: data.category,
       author: data.author,
+      preview: content.slice(0, 200).replace("\n", "").replace("\r", "") + "...",
       content,
       //TODO: ADD PREVIEW
       // preview: "",
     });
   }
 
-  fs.writeFileSync("./src/data/posts.json", JSON.stringify(blogPosts, null, 2));
+  await fs.writeFile("./src/data/posts.json", JSON.stringify(blogPosts, null, 2));
 
-  return Response.json({ message: "Posts is successfully re-generated" });
+  return NextResponse.json({ message: "Posts is successfully re-generated" });
 }
