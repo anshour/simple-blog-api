@@ -1,7 +1,7 @@
 This project is a simple blog API built using the Next.js App router. Here are some highlights of this project:
 
 - Does not using any database, only a JSON and Markdown files
-- Using vercel edge runtimes, so the response time is super fast
+- Using vercel serverless runtimes, so the response time is fast
 - 0$ Deployment cost when using Vercel.
 - The goal is to provide a beginner-friendly API that is easy to understand and use.
 
