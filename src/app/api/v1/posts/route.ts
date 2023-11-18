@@ -41,8 +41,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const id = v4();
-  //TODO: ADD VALIDATION
   const { title, content } = await request.json();
+  if (!title || !content) {
+    return NextResponse.json({ message: "Title and content field is required" }, { status: 422 });
+  }
 
   const slug = slugify(title, { lower: true });
 

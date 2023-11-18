@@ -16,6 +16,9 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 export async function PATCH(request: NextRequest, { params }: { params: { slug: string } }) {
   const slug = params.slug;
   const { content } = await request.json();
+  if (!content) {
+    return NextResponse.json({ message: "Content field is required" }, { status: 422 });
+  }
 
   const postData = posts.find((x) => x.slug === slug);
 
