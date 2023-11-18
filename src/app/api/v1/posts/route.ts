@@ -3,6 +3,7 @@ import searchLike from "~/utils/search-like";
 import posts from "~/data/posts.json";
 import slugify from "slugify";
 import fs from "fs/promises";
+import path from "path";
 import { v4 } from "uuid";
 
 export async function GET(request: NextRequest) {
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
   }
   try {
     await fs.writeFile(
-      `./src/data/md/${slug}.md`,
+      path.resolve(`./src/data/md/${slug}.md`),
       `---
 id: "${id}"
 title: "${title}"
