@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
       { status: 422 }
     );
   }
-
-  await fs.writeFile(
-    `./src/data/md/${slug}.md`,
-    `---
+  try {
+    await fs.writeFile(
+      `./src/data/md/${slug}.md`,
+      `---
 id: "${id}"
 title: "${title}"
 author: "John Doe"
@@ -67,8 +67,13 @@ category: "technology"
 ---
 
 ${content}`,
-    "utf-8"
-  );
+      "utf-8"
+    );
+  } catch (error) {
+    return NextResponse.json({
+      error,
+    });
+  }
 
   //REGENERATE posts.json
   await fetch(request.nextUrl.origin + "/api/v1/posts/generate");
