@@ -1,4 +1,5 @@
 ---
+id: "cd094ff2-72c7-48c0-9ebd-9dec054c88a3"
 title: "The Role of Augmented Reality in Shaping the Tech Landscape"
 author: "John Doe"
 tags: ["developer", "programming"]

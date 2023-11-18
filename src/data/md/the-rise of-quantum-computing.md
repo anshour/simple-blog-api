@@ -1,4 +1,5 @@
 ---
+id: "63e2b0e4-c148-43f9-8a8a-f09effa5da50"
 title: "Embracing the Future: The Rise of Quantum Computing"
 author: "John Doe"
 tags: ["developer", "programming"]

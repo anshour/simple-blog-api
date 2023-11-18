@@ -1,4 +1,5 @@
 ---
+id: "664b0c51-4e4f-47dd-9b0c-2630821e653e"
 title: "The Programmer's Toolkit: Essential Software for Modern Development"
 author: "John Doe"
 tags: ["developer", "programming"]

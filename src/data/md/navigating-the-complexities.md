@@ -1,4 +1,5 @@
 ---
+id: "2c267436-9c22-436c-834c-811e5ac2bcee"
 title: "AI Ethics: Navigating the Complexities of Machine Morality"
 author: "John Doe"
 tags: ["developer", "programming"]

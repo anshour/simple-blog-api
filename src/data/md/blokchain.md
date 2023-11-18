@@ -1,4 +1,5 @@
 ---
+id: "ce81f55a-f387-44c1-90f2-33371a6a69d2"
 title: "Blockchain Beyond Bitcoin: Diverse Applications of a Revolutionary Technology"
 author: "John Doe"
 tags: ["developer", "programming"]

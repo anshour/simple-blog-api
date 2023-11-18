@@ -1,4 +1,5 @@
 ---
+id: "24815567-5cf7-4d89-b395-1ad7de28c330"
 title: "The Power of Open Source: How Collaboration is Driving Innovation"
 author: "John Doe"
 tags: ["developer", "programming"]

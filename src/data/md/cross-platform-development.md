@@ -1,4 +1,5 @@
 ---
+id: "a222e312-b977-41b1-b3b7-3abaa89a3f3a"
 title: "Cross-Platform Development: Bridging the Gap Between Android and iOS"
 author: "John Doe"
 tags: ["developer", "programming"]

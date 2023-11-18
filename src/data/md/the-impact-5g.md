@@ -1,4 +1,5 @@
 ---
+id: "824e997d-daf0-47b6-b6f8-944934e4e2bf"
 title: "The Impact of 5G Technology on Mobile Development"
 author: "John Doe"
 tags: ["developer", "programming"]

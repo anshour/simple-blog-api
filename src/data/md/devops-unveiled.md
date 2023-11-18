@@ -1,4 +1,5 @@
 ---
+id: "4d8af972-c3ae-472a-8abc-af37f235dc76"
 title: "DevOps Unveiled: Streamlining Software Delivery"
 author: "John Doe"
 tags: ["developer", "programming"]

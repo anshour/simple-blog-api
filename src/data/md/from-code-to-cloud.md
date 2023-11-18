@@ -1,4 +1,5 @@
 ---
+id: "4b194df9-bd9b-470e-90b9-7ed0a5de6450"
 title: "From Code to Cloud: Best Practices in Cloud Computing"
 author: "John Doe"
 tags: ["developer", "programming"]
