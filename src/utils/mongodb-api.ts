@@ -1,29 +1,3 @@
-// * USING AXIOS
-// import axios from "axios";
-
-// const httpDb = axios.create({
-//   baseURL: process.env.MONGDB_ENDPOINT_URL,
-//   headers: {
-//     "Content-Type": "application/json",
-//     "api-key": process.env.MONGODB_API_KEY,
-//   },
-// });
-
-// httpDb.interceptors.request.use(
-//   function (config) {
-//     config.data = {
-//       ...config.data,
-//       dataSource: process.env.MONGODB_DATASOURCE,
-//       database: process.env.MONGODB_DATABASE,
-//     };
-//     return config;
-//   },
-//   function (error) {
-//     return Promise.reject(error);
-//   }
-// );
-
-// * USING FETCH
 const mongodbApi = {
   baseURL: process.env.MONGDB_ENDPOINT_URL!,
   headers: {
@@ -63,16 +37,34 @@ const mongodbApi = {
       return Promise.reject(error);
     }
   },
-};
 
-//TODO: ADD MONGODB ACTION
-// mongodbApiClient.findOne = async ( data) => {
-//   try {
-//     const response = await mongodbApiClient.post('/action/findOne' ,data);
-//     return response.data;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+  async insertOne(body = {}) {
+    return this.request("/action/insertOne", body);
+  },
+  async findOne(body = {}) {
+    return this.request("/action/findOne", body);
+  },
+  async updateOne(body = {}) {
+    return this.request("/action/updateOne", body);
+  },
+  async deleteOne(body = {}) {
+    return this.request("/action/deleteOne", body);
+  },
+  async insertMany(body = {}) {
+    return this.request("/action/insertMany", body);
+  },
+  async findMany(body = {}) {
+    return this.request("/action/findMany", body);
+  },
+  async updateMany(body = {}) {
+    return this.request("/action/updateMany", body);
+  },
+  async deleteMany(body = {}) {
+    return this.request("/action/deleteMany", body);
+  },
+  async aggregate(body = {}) {
+    return this.request("/action/aggregate", body);
+  },
+};
 
 export default mongodbApi;

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
 
-  const res = await mongodbApi.request("/action/aggregate", {
+  const res = await mongodbApi.aggregate({
     collection: "posts",
     pipeline: [
       {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
   }
   const slug = slugify(title, { lower: true });
 
-  const oldPost = await mongodbApi.request("/action/findOne", {
+  const oldPost = await mongodbApi.findOne({
     collection: "posts",
     filter: { slug },
   });
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const res = await mongodbApi.request("/action/insertOne", {
+  const res = await mongodbApi.insertOne({
     collection: "posts",
     document: {
       title,
