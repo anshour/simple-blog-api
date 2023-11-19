@@ -1,6 +1,6 @@
 ---
 id: "0d04b9a8-235b-4df6-a2a1-da79e639ce92"
-title: "From Code to Cloud: Best Practices in Cloud Computing"
+title: "The Intersection of Tech and Design: UI/UX Best Practices"
 author: "John Doe"
 tags: ["developer", "programming"]
 category: "technology"
