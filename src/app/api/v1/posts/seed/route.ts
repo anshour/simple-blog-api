@@ -5,13 +5,13 @@ import matter from "gray-matter";
 import slugify from "slugify";
 import fs from "fs/promises";
 import path from "path";
-import httpDb from "~/utils/mongodb-api";
+import mongodbApi from "~/utils/mongodb-api";
 import pickRandomImage from "~/utils/pick-random-image";
 
 export async function GET(request: NextRequest) {
   const reset = request.nextUrl.searchParams.get("reset");
   if (reset) {
-    await httpDb.request("/action/deleteMany", {
+    await mongodbApi.request("/action/deleteMany", {
       collection: "posts",
       filter: {},
     });
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const fullContent = await fs.readFile(filePath, "utf-8");
     const { data, content } = matter(fullContent);
 
-    await httpDb.request("/action/insertOne", {
+    await mongodbApi.request("/action/insertOne", {
       collection: "posts",
       document: {
         title: data.title,

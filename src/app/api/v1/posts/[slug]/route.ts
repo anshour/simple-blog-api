@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import httpDb from "~/utils/mongodb-api";
+import mongodbApi from "~/utils/mongodb-api";
 
 export const runtime = "edge";
 
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   const slug = params.slug;
 
-  const res = await httpDb.request("/action/findOne", {
+  const res = await mongodbApi.request("/action/findOne", {
     collection: "posts",
     filter: {
       slug,
@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { slug: 
     return NextResponse.json({ message: "Content field is required" }, { status: 422 });
   }
 
-  const res = await httpDb.request("/action/findOne", {
+  const res = await mongodbApi.request("/action/findOne", {
     collection: "posts",
     filter: {
       slug,
@@ -42,7 +42,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { slug: 
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
-  await httpDb.request("/action/updateOne", {
+  await mongodbApi.request("/action/updateOne", {
     collection: "posts",
     filter: {
       _id: postData.id,
@@ -64,7 +64,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { slug: 
 export async function DELETE(request: NextRequest, { params }: { params: { slug: string } }) {
   const slug = params.slug;
 
-  const res = await httpDb.request("/action/findOne", {
+  const res = await mongodbApi.request("/action/findOne", {
     collection: "posts",
     filter: {
       slug,
@@ -77,7 +77,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { slug:
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
-  await httpDb.request("/action/deleteOne", {
+  await mongodbApi.request("/action/deleteOne", {
     collection: "posts",
     filter: {
       slug,
