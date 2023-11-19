@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const files = await fs.readdir("./src/data/md", { withFileTypes: true });
+  const files = await fs.readdir("./src/seed/md", { withFileTypes: true });
 
   for (let index = 0; index < files.length; index++) {
     const filePath = path.join(files[index].path, files[index].name);
