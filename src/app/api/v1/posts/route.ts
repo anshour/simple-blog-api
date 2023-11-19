@@ -10,7 +10,11 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
 
-  const resCount = await mongodbApi.request("/action/aggregate", {
+  const limit = 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const res = await mongodbApi.request("/action/aggregate", {
     collection: "posts",
     pipeline: [
       {
@@ -19,28 +23,16 @@ export async function GET(request: NextRequest) {
         },
       },
       {
-        $count: "totalPosts",
+        $facet: {
+          metadata: [{ $count: "total" }],
+          posts: [{ $skip: startIndex }, { $limit: limit }],
+        },
       },
     ],
   });
 
-  const total =
-    resCount.documents && resCount.documents.length ? resCount.documents[0].totalPosts : 0;
-  const limit = 10;
-  const lastPage = Math.ceil(total / limit);
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
-
-  const res = await mongodbApi.request("/action/find", {
-    collection: "posts",
-    filter: {
-      title: { $regex: searchQuery, $options: "i" },
-    },
-    skip: startIndex,
-    limit,
-  });
-
-  const posts = res.documents;
+  const posts = res.documents[0].posts;
+  const total = res.documents[0].metadata[0]?.total || 0;
 
   return Response.json({
     // TODO: CHANGE POST TYPE
@@ -57,7 +49,7 @@ export async function GET(request: NextRequest) {
       current_page: page,
       from: startIndex + 1,
       to: endIndex > total ? total : endIndex,
-      last_page: lastPage,
+      last_page: Math.ceil(total / limit),
       per_page: limit,
       total,
       path: `${request.nextUrl.origin}${request.nextUrl.pathname}`,
