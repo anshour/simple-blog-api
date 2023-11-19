@@ -24,7 +24,7 @@
 // );
 
 // * USING FETCH
-const httpDb = {
+const mongodbApi = {
   baseURL: process.env.MONGDB_ENDPOINT_URL!,
   headers: {
     "Content-Type": "application/json",
@@ -65,9 +65,6 @@ const httpDb = {
   },
 };
 
-// Usage example:
-// httpDb.request('/some-endpoint', { method: 'POST', body: JSON.stringify({ some: 'data' }) });
-
 //TODO: ADD MONGODB ACTION
 // mongodbApiClient.findOne = async ( data) => {
 //   try {
@@ -78,4 +75,4 @@ const httpDb = {
 //   }
 // };
 
-export default httpDb;
+export default mongodbApi;
