@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import slugify from "slugify";
 import httpDb from "~/utils/mongodb-api";
+import pickRandomImage from "~/utils/pick-random-image";
 
 export const runtime = "edge";
 
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
     collection: "posts",
     document: {
       title,
+      image: pickRandomImage(),
       slug,
       tags: ["programming", "coding"],
       category: "technology",
