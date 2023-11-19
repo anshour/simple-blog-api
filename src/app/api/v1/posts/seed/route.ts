@@ -43,5 +43,5 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return NextResponse.json({ message: "Posts is successfully re-generated" });
+  return NextResponse.json({ message: "Posts is successfully seeded" });
 }
