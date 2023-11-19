@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import slugify from "slugify";
-import httpDb from "~/utils/mongodb-api";
+import mongodbApi from "~/utils/mongodb-api";
 import pickRandomImage from "~/utils/pick-random-image";
 
 export const runtime = "edge";
@@ -10,26 +10,41 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
 
-  // TODO: USE AGGREGATE FUNCTION
-  const res = await httpDb.request("/action/find", {
+  const resCount = await mongodbApi.request("/action/aggregate", {
+    collection: "posts",
+    pipeline: [
+      {
+        $match: {
+          title: { $regex: searchQuery, $options: "i" },
+        },
+      },
+      {
+        $count: "totalPosts",
+      },
+    ],
+  });
+
+  const total =
+    resCount.documents && resCount.documents.length ? resCount.documents[0].totalPosts : 0;
+  const limit = 10;
+  const lastPage = Math.ceil(total / limit);
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const res = await mongodbApi.request("/action/find", {
     collection: "posts",
     filter: {
-      title: { $regex: searchQuery, $options: "i" }, // Case-insensitive search for 'program' in the title
+      title: { $regex: searchQuery, $options: "i" },
     },
+    skip: startIndex,
+    limit,
   });
 
   const posts = res.documents;
 
-  const perPage = 10;
-  const totalPosts = posts.length;
-  const lastPage = Math.ceil(totalPosts / perPage);
-  const startIndex = (page - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const paginatedPosts = posts.slice(startIndex, endIndex);
-
   return Response.json({
     // TODO: CHANGE POST TYPE
-    data: paginatedPosts.map((post: any) => ({
+    data: posts.map((post: any) => ({
       _id: post._id,
       slug: post.slug,
       title: post.title,
@@ -41,10 +56,10 @@ export async function GET(request: NextRequest) {
     meta: {
       current_page: page,
       from: startIndex + 1,
-      to: endIndex > totalPosts ? totalPosts : endIndex,
+      to: endIndex > total ? total : endIndex,
       last_page: lastPage,
-      per_page: perPage,
-      total: totalPosts,
+      per_page: limit,
+      total,
       path: `${request.nextUrl.origin}${request.nextUrl.pathname}`,
     },
   });
@@ -57,7 +72,7 @@ export async function POST(request: NextRequest) {
   }
   const slug = slugify(title, { lower: true });
 
-  const oldPost = await httpDb.request("/action/findOne", {
+  const oldPost = await mongodbApi.request("/action/findOne", {
     collection: "posts",
     filter: { slug },
   });
@@ -69,7 +84,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const res = await httpDb.request("/action/insertOne", {
+  const res = await mongodbApi.request("/action/insertOne", {
     collection: "posts",
     document: {
       title,
