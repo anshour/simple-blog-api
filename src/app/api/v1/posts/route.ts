@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
       _id: post._id,
       slug: post.slug,
       title: post.title,
+      image: post.image,
       tags: post.tags,
       category: post.category,
       preview: post.preview,

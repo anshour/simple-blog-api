@@ -1,4 +1,4 @@
-// THIS FUNCTION IS FOR GENERATING POSTS.JSON FILE FROM MD FILE
+// THIS FUNCTION IS FOR SEEDING THE DATABASE
 // YOU SHOULD ONLY RUN THIS FUNCTION ONCE
 import { NextRequest, NextResponse } from "next/server";
 import matter from "gray-matter";
@@ -6,8 +6,17 @@ import slugify from "slugify";
 import fs from "fs/promises";
 import path from "path";
 import httpDb from "~/utils/mongodb-api";
+import pickRandomImage from "~/utils/pick-random-image";
 
 export async function GET(request: NextRequest) {
+  const reset = request.nextUrl.searchParams.get("reset");
+  if (reset) {
+    await httpDb.request("/action/deleteMany", {
+      collection: "posts",
+      filter: {},
+    });
+  }
+
   const files = await fs.readdir("./src/data/md", { withFileTypes: true });
 
   for (let index = 0; index < files.length; index++) {
@@ -19,6 +28,7 @@ export async function GET(request: NextRequest) {
       collection: "posts",
       document: {
         title: data.title,
+        image: pickRandomImage(),
         slug: slugify(data.title, { lower: true }),
         tags: data.tags,
         category: data.category,
