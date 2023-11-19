@@ -1,6 +1,6 @@
 ---
 id: "2c6d46a3-f6de-44ef-ab2a-429c9545212a"
-title: "10-productivity-tips-for-programmers"
+title: "10 Productivity Tips for Programmers"
 author: "John Doe"
 tags: ["developer", "programming"]
 category: "technology"
