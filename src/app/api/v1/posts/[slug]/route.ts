@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import posts from "~/data/posts.json";
-import fs from "fs/promises";
+import httpDb from "~/utils/mongodb-api";
+
+export const runtime = "edge";
 
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   const slug = params.slug;
-  const postData = posts.find((x) => x.slug === slug);
+
+  const res = await httpDb.request("/action/findOne", {
+    collection: "posts",
+    filter: {
+      slug,
+    },
+  });
+
+  const postData = res.document;
 
   if (!postData) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -20,44 +29,60 @@ export async function PATCH(request: NextRequest, { params }: { params: { slug: 
     return NextResponse.json({ message: "Content field is required" }, { status: 422 });
   }
 
-  const postData = posts.find((x) => x.slug === slug);
+  const res = await httpDb.request("/action/findOne", {
+    collection: "posts",
+    filter: {
+      slug,
+    },
+  });
+
+  const postData = res.document;
 
   if (!postData) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
-  await fs.writeFile(
-    `./src/data/md/${postData.file}`,
-    `---
-id: "${postData.id}"
-title: "${postData.title}"
-author: "${postData.author}"
-tags: ${postData.tags}
-category: ${postData.category}
----
-
-${content}`,
-    "utf-8"
-  );
-
-  //REGENERATE posts.json
-  await fetch(request.nextUrl.origin + "/api/v1/posts/generate");
+  await httpDb.request("/action/updateOne", {
+    collection: "posts",
+    filter: {
+      _id: postData.id,
+    },
+    update: {
+      $set: {
+        preview: content.slice(0, 200).replace("\n", "").replace("\r", "") + "...",
+        content,
+        updated_at: {
+          $date: new Date().toISOString(),
+        },
+      },
+    },
+  });
 
   return NextResponse.json({ message: "Post updated successfully" });
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { slug: string } }) {
   const slug = params.slug;
-  const postData = posts.find((x) => x.slug === slug);
+
+  const res = await httpDb.request("/action/findOne", {
+    collection: "posts",
+    filter: {
+      slug,
+    },
+  });
+
+  const postData = res.document;
 
   if (!postData) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 
-  await fs.unlink(`./src/data/md/${postData.file}`);
-
-  //REGENERATE posts.json
-  await fetch(request.nextUrl.origin + "/api/v1/posts/generate");
+  await httpDb.request("/action/deleteOne", {
+    collection: "posts",
+    filter: {
+      slug,
+    },
+  });
 
   return NextResponse.json({ message: "Post deleted successfully" });
 }
