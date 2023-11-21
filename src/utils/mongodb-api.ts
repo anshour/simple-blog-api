@@ -75,8 +75,8 @@ class MongodbAPI {
     });
 
     if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorBody.error}`);
+      const errorMessage = await response.json();
+      throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
     }
 
     return response.json();
