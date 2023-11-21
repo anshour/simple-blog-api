@@ -1,70 +1,129 @@
-const mongodbApi = {
-  baseURL: process.env.MONGDB_ENDPOINT_URL!,
-  headers: {
-    "Content-Type": "application/json",
-    "api-key": process.env.MONGODB_API_KEY!,
-  },
-  dataSource: process.env.MONGODB_DATASOURCE!,
-  database: process.env.MONGODB_DATABASE!,
+//* SEE FULL POSSIBLE OPTIONS VISIT https://www.mongodb.com/docs/atlas/app-services/data-api/openapi/
 
-  async request(endpoint: string, body = {}) {
-    const url = this.baseURL + endpoint;
-    const defaultHeaders = this.headers;
+interface BasicRequest {
+  collection: string;
+}
 
-    const defaultBody = {
-      dataSource: this.dataSource,
-      database: this.database,
-    };
+interface InsertOneRequest extends BasicRequest {
+  document: Record<string, any>;
+}
 
-    const config = {
+interface FindOneRequest extends BasicRequest {
+  filter: Record<string, any>;
+}
+
+interface UpdateOneRequest extends BasicRequest {
+  filter: Record<string, any>;
+  update: Record<string, any>;
+}
+
+interface DeleteOneRequest extends BasicRequest {
+  filter: Record<string, any>;
+}
+
+interface InsertManyRequest extends BasicRequest {
+  documents: Record<string, any>[];
+}
+
+interface FindManyRequest extends BasicRequest {
+  filter?: Record<string, any>;
+  projection?: Record<string, any>;
+  sort?: Record<string, number>;
+  limit?: number;
+  skip?: number;
+}
+
+interface UpdateManyRequest extends BasicRequest {
+  filter?: Record<string, any>;
+  update: Record<string, any>;
+}
+
+interface DeleteManyRequest extends BasicRequest {
+  filter?: Record<string, any>;
+}
+
+interface AggregateRequest extends BasicRequest {
+  pipeline: Record<string, any>[];
+}
+
+interface MongodbConfig {
+  baseURL: string;
+  apiKey: string;
+  dataSource: string;
+  database: string;
+}
+
+class MongodbAPI {
+  constructor(private config: MongodbConfig) {}
+
+  private async request<T extends BasicRequest>(endpoint: string, body: T): Promise<any> {
+    const url = `${this.config.baseURL}${endpoint}`;
+
+    const response = await fetch(url, {
       method: "POST",
+      cache: "no-store",
       headers: {
-        ...defaultHeaders,
+        Accept: "application/json",
+        "Content-Type": "application/ejson",
+        "api-key": this.config.apiKey,
       },
       body: JSON.stringify({
-        ...defaultBody,
+        dataSource: this.config.dataSource,
+        database: this.config.database,
         ...body,
       }),
-    };
+    });
 
-    try {
-      const response = await fetch(url, config);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    } catch (error) {
-      return Promise.reject(error);
+    if (!response.ok) {
+      const errorBody = await response.json();
+      throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorBody.error}`);
     }
-  },
 
-  async insertOne(body = {}) {
-    return this.request("/action/insertOne", body);
-  },
-  async findOne(body = {}) {
-    return this.request("/action/findOne", body);
-  },
-  async updateOne(body = {}) {
-    return this.request("/action/updateOne", body);
-  },
-  async deleteOne(body = {}) {
-    return this.request("/action/deleteOne", body);
-  },
-  async insertMany(body = {}) {
-    return this.request("/action/insertMany", body);
-  },
-  async findMany(body = {}) {
-    return this.request("/action/findMany", body);
-  },
-  async updateMany(body = {}) {
-    return this.request("/action/updateMany", body);
-  },
-  async deleteMany(body = {}) {
-    return this.request("/action/deleteMany", body);
-  },
-  async aggregate(body = {}) {
-    return this.request("/action/aggregate", body);
-  },
-};
+    return response.json();
+  }
+
+  public insertOne(request: InsertOneRequest) {
+    return this.request("/action/insertOne", request);
+  }
+
+  public findOne(request: FindOneRequest) {
+    return this.request("/action/findOne", request);
+  }
+
+  public updateOne(request: UpdateOneRequest) {
+    return this.request("/action/updateOne", request);
+  }
+
+  public deleteOne(request: DeleteOneRequest) {
+    return this.request("/action/deleteOne", request);
+  }
+
+  public insertMany(request: InsertManyRequest) {
+    return this.request("/action/insertMany", request);
+  }
+
+  public findMany(request: FindManyRequest) {
+    return this.request("/action/findMany", request);
+  }
+
+  public updateMany(request: UpdateManyRequest) {
+    return this.request("/action/updateMany", request);
+  }
+
+  public deleteMany(request: DeleteManyRequest) {
+    return this.request("/action/deleteMany", request);
+  }
+
+  public aggregate(request: AggregateRequest) {
+    return this.request("/action/aggregate", request);
+  }
+}
+
+const mongodbApi = new MongodbAPI({
+  baseURL: process.env.MONGODB_ENDPOINT_URL ?? "",
+  apiKey: process.env.MONGODB_API_KEY ?? "",
+  dataSource: process.env.MONGODB_DATASOURCE ?? "",
+  database: process.env.MONGODB_DATABASE ?? "",
+});
 
 export default mongodbApi;
