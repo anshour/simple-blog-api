@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import slugify from "slugify";
-import mongodbApi from "~/utils/mongodb-api";
 import pickRandomImage from "~/utils/pick-random-image";
+import mongodbApi from "~/utils/mongodb-api";
+import slugify from "slugify";
 
 export const runtime = "edge";
 
@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
       title: post.title,
       image: post.image,
       tags: post.tags,
+      author: post.author,
       category: post.category,
       preview: post.preview,
     })),
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { title, content } = await request.json();
+  const { title, content, author, category } = await request.json();
   if (!title || !content) {
     return NextResponse.json({ message: "Title and content field is required" }, { status: 422 });
   }
@@ -83,8 +84,8 @@ export async function POST(request: NextRequest) {
       image: pickRandomImage(),
       slug,
       tags: ["programming", "coding"],
-      category: "technology",
-      author: "John Doe",
+      category: category || "technology",
+      author: author || "John Doe",
       preview: content.slice(0, 200).replace("\n", "").replace("\r", "") + "...",
       content,
       created_at: {
