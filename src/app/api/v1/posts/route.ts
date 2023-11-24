@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import pickRandomImage from "~/utils/pick-random-image";
 import mongodbApi from "~/utils/mongodb-api";
 import slugify from "slugify";
+import { PostSchema } from "~/schema/PostSchema";
 
 export const runtime = "edge";
 
@@ -60,6 +61,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const { title, content, author, category } = await request.json();
+
   if (!title || !content) {
     return NextResponse.json({ message: "Title and content field is required" }, { status: 422 });
   }
@@ -77,17 +79,29 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const validatedPost = PostSchema.safeParse({
+    title,
+    image: pickRandomImage(),
+    slug,
+    tags: ["programming", "coding"],
+    category: category || "technology",
+    author: author || "John Doe",
+    preview: content.slice(0, 200).replace("\n", "").replace("\r", "") + "...",
+    content,
+  });
+
+  if (!validatedPost.success) {
+    return NextResponse.json({
+      message: "Validation error",
+      status: 422,
+      errors: validatedPost.error.issues,
+    });
+  }
+
   const res = await mongodbApi.insertOne({
     collection: "posts",
     document: {
-      title,
-      image: pickRandomImage(),
-      slug,
-      tags: ["programming", "coding"],
-      category: category || "technology",
-      author: author || "John Doe",
-      preview: content.slice(0, 200).replace("\n", "").replace("\r", "") + "...",
-      content,
+      ...validatedPost.data,
       created_at: {
         $date: new Date().toISOString(),
       },
