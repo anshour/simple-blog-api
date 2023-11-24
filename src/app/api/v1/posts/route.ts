@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const page = parseInt(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
+  const category = searchParams.get("category") || "";
 
   const limit = 10;
   const startIndex = (page - 1) * limit;
@@ -21,6 +22,7 @@ export async function GET(request: NextRequest) {
       {
         $match: {
           title: { $regex: searchQuery, $options: "i" },
+          category: category || { $exists: true },
         },
       },
       {
